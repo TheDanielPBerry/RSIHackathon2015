@@ -1,7 +1,7 @@
 <?php
 
-
-$db = new mysqli('mysql5011.smarterasp.net', 'a118ff_hack15', '***REMOVED***', 'db_a118ff_hack15');
+$config = parse_ini_file('./config.ini', true);
+$db = new mysqli($config['database']['host'], $config['database']['user'], $config['database']['pass'], $config['database']['database'], $config['database']['port']);
 
 if($db->connect_errno) {
 	die('Error.');
@@ -21,16 +21,9 @@ if($db->connect_errno) {
 <?php
 $complete = isset($_POST["complete"]);
 if($complete==true) {
-	/*
-	if($insert = $db->query("
-	INSERT INTO applications (name, email, phone, jobid, created) 
-	VALUES ('" . $_POST["name"] . "', '" . $_POST["email"] . "', '" . $_POST["phone"] . "', '" . $_POST["jobid"] . "', NOW())")) {
-		*/
-		
 	if($insert = $db->query("INSERT INTO `applications` (`id`, `name`, `phone`, `email`, `jobid`, `time`) VALUES (NULL, '" . $_POST["name"] . "', '" . $_POST["phone"] . "', '" . $_POST["email"] . "', '" . $_POST["jobid"] . "', CURRENT_TIMESTAMP)")) {
 	
 	}
-}
 ?>
 
 
@@ -67,7 +60,7 @@ if($complete==true) {
             <div class="container">
 			
 			<?php
-if($result = $db->query("SELECT * FROM jobs WHERE jobid='" . $_GET["jobid"] . "'") or die($db->error)) {
+if($result = $db->prepare("SELECT * FROM jobs WHERE jobid='" . $_GET["jobid"] . "'") or die($db->error)) {
 	if($count = $result->num_rows) {
 		$data = array();
 		$i=0;
